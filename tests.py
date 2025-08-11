@@ -1,6 +1,7 @@
 import unittest
 from functions.get_files_info import get_files_info
-
+from functions.get_file_content import get_file_content
+from functions.config import MAX_FILE_SIZE
 
 class TestGetFilesInfo(unittest.TestCase):
     
@@ -25,6 +26,19 @@ class TestGetFilesInfo(unittest.TestCase):
             with self.subTest(working_directory=working_directory, directory=directory):
                 result = get_files_info(working_directory, directory)
                 self.assertEqual(result, expected)
+
+    def test_get_file_content(self):
+        test_cases = [
+            ("calculator", "lorem.txt", MAX_FILE_SIZE + 500, "truncated")
+        ]
+
+        for working_directory, file_path, size, contains in test_cases:
+            with self.subTest(working_directory=working_directory, file_path=file_path):
+                contents = get_file_content(working_directory, file_path)
+                self.assertLess(contents.__len__(), size)
+                self.assertIn(contains, contents)
+
+
 
 if __name__ == '__main__':
     unittest.main()
