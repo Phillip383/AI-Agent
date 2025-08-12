@@ -2,14 +2,13 @@ import os
 from functions.config import MAX_FILE_SIZE
 
 def get_file_content(working_directory, file_path):
-    abs_path = os.path.abspath(working_directory)
-    
-    if file_path in os.listdir(abs_path):
-        path = os.path.join(abs_path, file_path)
+    abs_path = os.path.abspath(os.path.join(working_directory, file_path))
+
+    if os.path.exists(abs_path):
         
-        if os.path.isfile(path):
+        if os.path.isfile(abs_path):
             try:
-                with open(path, "r") as file:
+                with open(abs_path, "r") as file:
                     content = file.read()
                     if content.__len__() > MAX_FILE_SIZE:
                         content = content[:MAX_FILE_SIZE]
