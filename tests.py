@@ -1,30 +1,27 @@
 import unittest
-from functions.get_file_content import get_file_content
-from functions.config import MAX_FILE_SIZE
+import os
+from functions.write_file import write_file
 
 class TestGetFilesInfo(unittest.TestCase):
 
-    def test_get_file_content(self):
+    def test_write_file(self):
         test_cases = [
-            #("calculator", "lorem.txt", MAX_FILE_SIZE + 500, "truncated"),
-            ("calculator", "main.py", MAX_FILE_SIZE + 500, "truncated"),
-            ("calculator", "pkg/calculator.py", MAX_FILE_SIZE + 500, "truncated"),
-            ("calculator", "\\bin\\cat", MAX_FILE_SIZE + 500, "Error"),
-            ("calculator", "pkg/does_not_exist.py", MAX_FILE_SIZE + 500, "Error")
+            ("calculator", "lorem.txt", "wait, this isn't lorem ipsum"),
+            ("calculator", "pkg/morelorem.txt", "lorem ipsum dolor sit amet"),
+            ("calculator", "/tmp/temp.txt", "this should not be allowed"),
         ]
 
-        for working_directory, file_path, size, contains in test_cases:
-            with self.subTest(working_directory=working_directory, file_path=file_path):
-                contents = get_file_content(working_directory, file_path)
-                self.assertLess(contents.__len__(), size)
-                if contents.__len__() >= MAX_FILE_SIZE:
-                    self.assertIn(contains, contents)
-                elif contains == "Error":
-                    self.assertIn(contains, contents)
-                print(contents)
-
-
-
+        for working_directory, file_path, content in test_cases:
+            with self.subTest(working_directory=working_directory, file_path=file_path, content=content):
+                with self.subTest(working_directory=working_directory, file_path=file_path, content=content):
+                    result = write_file(working_directory, file_path, content)
+                    file = os.path.abspath(os.path.join(file_path))
+                    if os.path.exists(file):
+                        with open(file, "r") as f:
+                            c = f.read()
+                            self.assertIn(content, c)
+                            
+                    print(result)
 
 if __name__ == '__main__':
     unittest.main()
